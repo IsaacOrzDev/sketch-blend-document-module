@@ -1,15 +1,15 @@
 syntax = "proto3";
 
-option go_package = "./testing";
+option go_package = "./proto";
 
 service TestingService {
   rpc Test (TestRequest) returns (TestResponse);
 }
 
 message TestRequest {
-  string name = 1;
+  // string name = 1;
 }
 
 message TestResponse {
-  string message = 1;
+  repeated string names = 1;
 }

@@ -1,0 +1,36 @@
+generator db {
+  provider = "go run github.com/steebchen/prisma-client-go"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Login {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  data      Json?
+  imageUrl  String?
+  method    String
+  updatedAt DateTime @db.Date
+  userId    String   @db.ObjectId
+}
+
+model OneTimeAccessToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  email     String
+  token     String
+  updatedAt DateTime @db.Date
+  username  String
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @db.Date
+  email     String?
+  loginAt   DateTime @db.Date
+  name      String
+  updatedAt DateTime @db.Date
+}
