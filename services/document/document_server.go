@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type Server struct {
@@ -26,12 +27,13 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 	}
 
 	for _, record := range records {
+
 		documents = append(documents, &proto.Document{
 			Id:        record.ID,
 			Title:     record.Title,
 			Content:   record.Content,
-			CreatedAt: record.CreatedAt.Unix(),
-			UpdatedAt: record.UpdatedAt.Unix(),
+			CreatedAt: timestamppb.New(record.CreatedAt),
+			UpdatedAt: timestamppb.New(record.UpdatedAt),
 		})
 	}
 	return &proto.GetDocumentListReply{Documents: documents}, nil
@@ -53,8 +55,8 @@ func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest)
 		Id:        record.ID,
 		Title:     record.Title,
 		Content:   record.Content,
-		CreatedAt: record.CreatedAt.Unix(),
-		UpdatedAt: record.UpdatedAt.Unix(),
+		CreatedAt: timestamppb.New(record.CreatedAt),
+		UpdatedAt: timestamppb.New(record.UpdatedAt),
 	}}, nil
 }
 

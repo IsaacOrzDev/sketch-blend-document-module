@@ -7,7 +7,7 @@ build:
 db-pull:
 	go run github.com/steebchen/prisma-client-go db pull
 
-db-pull:
+db-push:
 	go run github.com/steebchen/prisma-client-go db push	
 
 db-generate:
