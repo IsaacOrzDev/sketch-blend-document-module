@@ -34,3 +34,11 @@ model User {
   name      String
   updatedAt DateTime @db.Date
 }
+
+model Document {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  createdAt DateTime @db.Date
+  updatedAt DateTime @db.Date
+}

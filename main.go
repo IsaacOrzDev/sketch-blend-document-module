@@ -3,7 +3,7 @@ package main
 import (
 	"demo-system-document-module/prisma"
 	"demo-system-document-module/proto"
-	"demo-system-document-module/testing"
+	"demo-system-document-module/services/document"
 	"fmt"
 	"net"
 	"os"
@@ -17,7 +17,7 @@ import (
 func main() {
 
 	server := grpc.NewServer()
-	proto.RegisterTestingServiceServer(server, &testing.Server{})
+	proto.RegisterDocumentServiceServer(server, &document.Server{})
 
 	reflection.Register(server)
 
