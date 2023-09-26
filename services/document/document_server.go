@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/jsonpb"
-	"github.com/google/uuid"
 	"github.com/steebchen/prisma-client-go/runtime/types"
 	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -81,17 +80,18 @@ func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest)
 }
 
 func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentRequest) (*proto.SaveDocumentReply, error) {
-	id := uuid.New().String()
 
 	client := prisma.GetPrismaClient()
 
-	pathsJSON, err := structpb.NewValue(req.Document.Paths)
+	var err error
+	paths := "{}"
+	var description string
+	var image string
+	var svg string
 
-	var paths string
+	pathsJSON := structpb.NewStructValue(req.Document.Paths)
 
-	if pathsJSON == nil {
-		paths = "{}"
-	} else {
+	if pathsJSON != nil {
 		marshaler := &jsonpb.Marshaler{}
 		paths, err = marshaler.MarshalToString(pathsJSON)
 		if err != nil {
@@ -99,9 +99,6 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 		}
 	}
 
-	var description string
-	var image string
-	var svg string
 	if req.Document.Description != nil {
 		description = *req.Document.Description
 	}
@@ -112,7 +109,7 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 		svg = *req.Document.Svg
 	}
 
-	_, err = client.Document.CreateOne(
+	record, err := client.Document.CreateOne(
 		db.Document.Title.Set(req.Document.Title),
 		db.Document.CreatedAt.Set(time.Now()),
 		db.Document.UpdatedAt.Set(time.Now()),
@@ -126,7 +123,7 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 		panic(err)
 	}
 
-	return &proto.SaveDocumentReply{Id: id}, nil
+	return &proto.SaveDocumentReply{Id: record.ID}, nil
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *proto.UpdateDocumentRequest) (*proto.UpdateDocumentReply, error) {
