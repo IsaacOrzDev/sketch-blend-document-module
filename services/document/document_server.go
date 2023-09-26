@@ -37,6 +37,7 @@ func documentToProto(record *db.DocumentModel) *proto.Document {
 
 	return &proto.Document{
 		Id:        record.ID,
+		UserId:    uint32(record.UserID),
 		Title:     record.Title,
 		CreatedAt: timestamppb.New(record.CreatedAt),
 		UpdatedAt: timestamppb.New(record.UpdatedAt),
@@ -52,7 +53,20 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 
 	var documents = []*proto.Document{}
 
-	records, err := client.Document.FindMany().Exec(ctx)
+	var filter []db.DocumentWhereParam
+	if req.UserId != nil {
+		filter = append(filter, db.Document.UserID.Equals(int(*req.UserId)))
+	}
+
+	var query = client.Document.FindMany(filter...)
+	if req.Limit != nil {
+		query = query.Take(int(*req.Limit))
+	}
+	if req.Offset != nil {
+		query = query.Skip(int(*req.Offset))
+	}
+
+	records, err := query.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -110,6 +124,7 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 	}
 
 	record, err := client.Document.CreateOne(
+		db.Document.UserID.Set(int(req.UserId)),
 		db.Document.Title.Set(req.Document.Title),
 		db.Document.CreatedAt.Set(time.Now()),
 		db.Document.UpdatedAt.Set(time.Now()),

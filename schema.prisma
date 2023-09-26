@@ -9,6 +9,7 @@ datasource db {
 
 model Document {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      Int
   title       String
   description String?
   image       String?
