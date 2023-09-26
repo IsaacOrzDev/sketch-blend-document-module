@@ -23,7 +23,11 @@ func documentToProto(record *db.DocumentModel) *proto.Document {
 	svg, _ := record.Svg()
 	paths, _ := record.Paths()
 
-	pathsStr := string(paths)
+	pathsStr := "{}"
+
+	if paths != nil {
+		pathsStr = string(paths)
+	}
 
 	pathsStruct := &structpb.Struct{}
 
