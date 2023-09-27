@@ -17,6 +17,36 @@ type Server struct {
 	proto.UnimplementedDocumentServiceServer
 }
 
+func documentToProtoDetail(record *db.DocumentModel) *proto.DocumentDetail {
+	image, _ := record.Image()
+	svg, _ := record.Svg()
+	paths, _ := record.Paths()
+
+	pathsStr := "{}"
+
+	if paths != nil {
+		pathsStr = string(paths)
+	}
+
+	pathsStruct := &structpb.Struct{}
+
+	err := jsonpb.UnmarshalString(pathsStr, pathsStruct)
+	if err != nil {
+		panic(err)
+	}
+
+	return &proto.DocumentDetail{
+		Id:        record.ID,
+		UserId:    uint32(record.UserID),
+		Title:     record.Title,
+		CreatedAt: timestamppb.New(record.CreatedAt),
+		UpdatedAt: timestamppb.New(record.UpdatedAt),
+		Image:     &image,
+		Svg:       &svg,
+		Paths:     pathsStruct,
+	}
+}
+
 func documentToProto(record *db.DocumentModel) *proto.Document {
 	image, _ := record.Image()
 	svg, _ := record.Svg()
@@ -43,7 +73,6 @@ func documentToProto(record *db.DocumentModel) *proto.Document {
 		UpdatedAt: timestamppb.New(record.UpdatedAt),
 		Image:     &image,
 		Svg:       &svg,
-		Paths:     pathsStruct,
 	}
 }
 
@@ -90,7 +119,7 @@ func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest)
 		panic(err)
 	}
 
-	return &proto.GetDocumentReply{Record: documentToProto(record)}, nil
+	return &proto.GetDocumentReply{Record: documentToProtoDetail(record)}, nil
 }
 
 func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentRequest) (*proto.SaveDocumentReply, error) {
