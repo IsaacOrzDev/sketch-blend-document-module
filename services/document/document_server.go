@@ -21,6 +21,7 @@ func documentToProtoDetail(record *db.DocumentModel) *proto.DocumentDetail {
 	image, _ := record.Image()
 	svg, _ := record.Svg()
 	paths, _ := record.Paths()
+	description, _ := record.Description()
 
 	pathsStr := "{}"
 
@@ -36,43 +37,32 @@ func documentToProtoDetail(record *db.DocumentModel) *proto.DocumentDetail {
 	}
 
 	return &proto.DocumentDetail{
-		Id:        record.ID,
-		UserId:    uint32(record.UserID),
-		Title:     record.Title,
-		CreatedAt: timestamppb.New(record.CreatedAt),
-		UpdatedAt: timestamppb.New(record.UpdatedAt),
-		Image:     &image,
-		Svg:       &svg,
-		Paths:     pathsStruct,
+		Id:          record.ID,
+		UserId:      uint32(record.UserID),
+		Title:       record.Title,
+		Description: &description,
+		CreatedAt:   timestamppb.New(record.CreatedAt),
+		UpdatedAt:   timestamppb.New(record.UpdatedAt),
+		Image:       &image,
+		Svg:         &svg,
+		Paths:       pathsStruct,
 	}
 }
 
 func documentToProto(record *db.DocumentModel) *proto.Document {
 	image, _ := record.Image()
 	svg, _ := record.Svg()
-	paths, _ := record.Paths()
-
-	pathsStr := "{}"
-
-	if paths != nil {
-		pathsStr = string(paths)
-	}
-
-	pathsStruct := &structpb.Struct{}
-
-	err := jsonpb.UnmarshalString(pathsStr, pathsStruct)
-	if err != nil {
-		panic(err)
-	}
+	description, _ := record.Description()
 
 	return &proto.Document{
-		Id:        record.ID,
-		UserId:    uint32(record.UserID),
-		Title:     record.Title,
-		CreatedAt: timestamppb.New(record.CreatedAt),
-		UpdatedAt: timestamppb.New(record.UpdatedAt),
-		Image:     &image,
-		Svg:       &svg,
+		Id:          record.ID,
+		UserId:      uint32(record.UserID),
+		Title:       record.Title,
+		CreatedAt:   timestamppb.New(record.CreatedAt),
+		UpdatedAt:   timestamppb.New(record.UpdatedAt),
+		Description: &description,
+		Svg:         &svg,
+		Image:       &image,
 	}
 }
 
@@ -101,9 +91,12 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 	}
 
 	for _, record := range records {
+		print(record.ID)
 
 		documents = append(documents, documentToProto(&record))
+
 	}
+
 	return &proto.GetDocumentListReply{Records: documents}, nil
 }
 
@@ -171,11 +164,68 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 }
 
 func (s *Server) UpdateDocument(ctx context.Context, req *proto.UpdateDocumentRequest) (*proto.UpdateDocumentReply, error) {
-	// Implement the UpdateDocument method here
+
+	client := prisma.GetPrismaClient()
+
+	var err error
+	paths := "{}"
+
+	pathsJSON := structpb.NewStructValue(req.Data.Paths)
+
+	if pathsJSON != nil {
+		marshaler := &jsonpb.Marshaler{}
+		paths, err = marshaler.MarshalToString(pathsJSON)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	var updates []db.DocumentSetParam
+
+	if req.Data.Title != "" {
+		updates = append(updates, db.Document.Title.Set(req.Data.Title))
+	}
+
+	if req.Data.Description != nil {
+		updates = append(updates, db.Document.Description.Set(*req.Data.Description))
+	}
+	if req.Data.Image != nil {
+		updates = append(updates, db.Document.Image.Set(*req.Data.Image))
+	}
+	if req.Data.Svg != nil {
+		updates = append(updates, db.Document.Svg.Set(*req.Data.Svg))
+	}
+
+	if req.Data.Paths != nil {
+		updates = append(updates, db.Document.Paths.Set(types.JSON(paths)))
+	}
+
+	updates = append(updates, db.Document.UpdatedAt.Set(time.Now()))
+
+	_, err = client.Document.FindUnique(
+		db.Document.ID.Equals(req.Id),
+	).Update(
+		updates...,
+	).Exec(ctx)
+
+	if err != nil {
+		panic(err)
+	}
+
 	return &proto.UpdateDocumentReply{Id: req.Id}, nil
 }
 
 func (s *Server) DeleteDocument(ctx context.Context, req *proto.DeleteDocumentRequest) (*proto.DeleteDocumentReply, error) {
-	// Implement the DeleteDocument method here
+
+	client := prisma.GetPrismaClient()
+
+	_, err := client.Document.FindUnique(
+		db.Document.ID.Equals(req.Id),
+	).Delete().Exec(ctx)
+
+	if err != nil {
+		panic(err)
+	}
+
 	return &proto.DeleteDocumentReply{Id: req.Id}, nil
 }

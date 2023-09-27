@@ -333,9 +333,8 @@ type UpdateDocumentRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id      string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title   string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Content string `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty"`
+	Id   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Data *SaveDocumentData `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *UpdateDocumentRequest) Reset() {
@@ -377,18 +376,11 @@ func (x *UpdateDocumentRequest) GetId() string {
 	return ""
 }
 
-func (x *UpdateDocumentRequest) GetTitle() string {
+func (x *UpdateDocumentRequest) GetData() *SaveDocumentData {
 	if x != nil {
-		return x.Title
+		return x.Data
 	}
-	return ""
-}
-
-func (x *UpdateDocumentRequest) GetContent() string {
-	if x != nil {
-		return x.Content
-	}
-	return ""
+	return nil
 }
 
 type UpdateDocumentReply struct {
@@ -864,10 +856,10 @@ var file_proto_document_proto_rawDesc = []byte{
 	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x52, 0x06, 0x72,
 	0x65, 0x63, 0x6f, 0x72, 0x64, 0x22, 0x57, 0x0a, 0x15, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44,
 	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e,
-	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14,
-	0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74,
-	0x69, 0x74, 0x6c, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x18,
-	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65, 0x6e, 0x74, 0x22, 0x25,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x2e,
+	0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x64,
+	0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x2e, 0x53, 0x61, 0x76, 0x65, 0x44, 0x6f, 0x63, 0x75,
+	0x6d, 0x65, 0x6e, 0x74, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x25,
 	0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74,
 	0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
 	0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x27, 0x0a, 0x15, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x44,
@@ -997,27 +989,28 @@ var file_proto_document_proto_depIdxs = []int32{
 	10, // 0: document.SaveDocumentRequest.data:type_name -> document.SaveDocumentData
 	11, // 1: document.GetDocumentListReply.records:type_name -> document.Document
 	12, // 2: document.GetDocumentReply.record:type_name -> document.DocumentDetail
-	13, // 3: document.SaveDocumentData.paths:type_name -> google.protobuf.Struct
-	14, // 4: document.Document.createdAt:type_name -> google.protobuf.Timestamp
-	14, // 5: document.Document.updatedAt:type_name -> google.protobuf.Timestamp
-	13, // 6: document.DocumentDetail.paths:type_name -> google.protobuf.Struct
-	14, // 7: document.DocumentDetail.createdAt:type_name -> google.protobuf.Timestamp
-	14, // 8: document.DocumentDetail.updatedAt:type_name -> google.protobuf.Timestamp
-	0,  // 9: document.DocumentService.SaveDocument:input_type -> document.SaveDocumentRequest
-	2,  // 10: document.DocumentService.GetDocumentList:input_type -> document.GetDocumentListRequest
-	4,  // 11: document.DocumentService.GetDocument:input_type -> document.GetDocumentRequest
-	6,  // 12: document.DocumentService.UpdateDocument:input_type -> document.UpdateDocumentRequest
-	8,  // 13: document.DocumentService.DeleteDocument:input_type -> document.DeleteDocumentRequest
-	1,  // 14: document.DocumentService.SaveDocument:output_type -> document.SaveDocumentReply
-	3,  // 15: document.DocumentService.GetDocumentList:output_type -> document.GetDocumentListReply
-	5,  // 16: document.DocumentService.GetDocument:output_type -> document.GetDocumentReply
-	7,  // 17: document.DocumentService.UpdateDocument:output_type -> document.UpdateDocumentReply
-	9,  // 18: document.DocumentService.DeleteDocument:output_type -> document.DeleteDocumentReply
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	10, // 3: document.UpdateDocumentRequest.data:type_name -> document.SaveDocumentData
+	13, // 4: document.SaveDocumentData.paths:type_name -> google.protobuf.Struct
+	14, // 5: document.Document.createdAt:type_name -> google.protobuf.Timestamp
+	14, // 6: document.Document.updatedAt:type_name -> google.protobuf.Timestamp
+	13, // 7: document.DocumentDetail.paths:type_name -> google.protobuf.Struct
+	14, // 8: document.DocumentDetail.createdAt:type_name -> google.protobuf.Timestamp
+	14, // 9: document.DocumentDetail.updatedAt:type_name -> google.protobuf.Timestamp
+	0,  // 10: document.DocumentService.SaveDocument:input_type -> document.SaveDocumentRequest
+	2,  // 11: document.DocumentService.GetDocumentList:input_type -> document.GetDocumentListRequest
+	4,  // 12: document.DocumentService.GetDocument:input_type -> document.GetDocumentRequest
+	6,  // 13: document.DocumentService.UpdateDocument:input_type -> document.UpdateDocumentRequest
+	8,  // 14: document.DocumentService.DeleteDocument:input_type -> document.DeleteDocumentRequest
+	1,  // 15: document.DocumentService.SaveDocument:output_type -> document.SaveDocumentReply
+	3,  // 16: document.DocumentService.GetDocumentList:output_type -> document.GetDocumentListReply
+	5,  // 17: document.DocumentService.GetDocument:output_type -> document.GetDocumentReply
+	7,  // 18: document.DocumentService.UpdateDocument:output_type -> document.UpdateDocumentReply
+	9,  // 19: document.DocumentService.DeleteDocument:output_type -> document.DeleteDocumentReply
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_proto_document_proto_init() }
