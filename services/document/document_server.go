@@ -75,7 +75,7 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 
 		documents = append(documents, documentToProto(&record))
 	}
-	return &proto.GetDocumentListReply{Documents: documents}, nil
+	return &proto.GetDocumentListReply{Records: documents}, nil
 }
 
 func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest) (*proto.GetDocumentReply, error) {
@@ -90,7 +90,7 @@ func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest)
 		panic(err)
 	}
 
-	return &proto.GetDocumentReply{Document: documentToProto(record)}, nil
+	return &proto.GetDocumentReply{Record: documentToProto(record)}, nil
 }
 
 func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentRequest) (*proto.SaveDocumentReply, error) {
@@ -103,7 +103,7 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 	var image string
 	var svg string
 
-	pathsJSON := structpb.NewStructValue(req.Document.Paths)
+	pathsJSON := structpb.NewStructValue(req.Data.Paths)
 
 	if pathsJSON != nil {
 		marshaler := &jsonpb.Marshaler{}
@@ -113,19 +113,19 @@ func (s *Server) SaveDocument(ctx context.Context, req *proto.SaveDocumentReques
 		}
 	}
 
-	if req.Document.Description != nil {
-		description = *req.Document.Description
+	if req.Data.Description != nil {
+		description = *req.Data.Description
 	}
-	if req.Document.Image != nil {
-		image = *req.Document.Image
+	if req.Data.Image != nil {
+		image = *req.Data.Image
 	}
-	if req.Document.Svg != nil {
-		svg = *req.Document.Svg
+	if req.Data.Svg != nil {
+		svg = *req.Data.Svg
 	}
 
 	record, err := client.Document.CreateOne(
 		db.Document.UserID.Set(int(req.UserId)),
-		db.Document.Title.Set(req.Document.Title),
+		db.Document.Title.Set(req.Data.Title),
 		db.Document.CreatedAt.Set(time.Now()),
 		db.Document.UpdatedAt.Set(time.Now()),
 		db.Document.Description.Set(description),
