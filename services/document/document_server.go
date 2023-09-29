@@ -109,7 +109,7 @@ func (s *Server) GetDocument(ctx context.Context, req *proto.GetDocumentRequest)
 	).Exec(ctx)
 
 	if err != nil {
-		panic(err)
+		return &proto.GetDocumentReply{}, nil
 	}
 
 	return &proto.GetDocumentReply{Record: documentToProtoDetail(record)}, nil
