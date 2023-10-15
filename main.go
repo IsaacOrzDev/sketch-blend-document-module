@@ -1,13 +1,13 @@
 package main
 
 import (
-	"demo-system-document-module/prisma"
-	"demo-system-document-module/proto"
-	"demo-system-document-module/services/document"
 	"fmt"
 	"net"
 	"os"
 	"os/signal"
+	"sketch-blend-document-module/prisma"
+	"sketch-blend-document-module/proto"
+	"sketch-blend-document-module/services/document"
 	"syscall"
 
 	"google.golang.org/grpc"

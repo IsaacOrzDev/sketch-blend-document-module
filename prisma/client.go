@@ -1,7 +1,7 @@
 package prisma
 
 import (
-	"demo-system-document-module/db"
+	"sketch-blend-document-module/db"
 	"sync"
 )
 

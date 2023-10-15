@@ -2,9 +2,9 @@ package document
 
 import (
 	"context"
-	"demo-system-document-module/db"
-	"demo-system-document-module/prisma"
-	"demo-system-document-module/proto"
+	"sketch-blend-document-module/db"
+	"sketch-blend-document-module/prisma"
+	"sketch-blend-document-module/proto"
 	"time"
 
 	"github.com/golang/protobuf/jsonpb"

@@ -1,4 +1,4 @@
-module demo-system-document-module
+module sketch-blend-document-module
 
 go 1.19
 

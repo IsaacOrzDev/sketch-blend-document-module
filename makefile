@@ -2,7 +2,7 @@ gen:
 	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./proto/*.proto
 
 build:
-	docker build --platform linux/amd64 -t demo-system-document-module .
+	docker build --platform linux/amd64 -t sketch-blend-document-module .
 
 db-pull:
 	go run github.com/steebchen/prisma-client-go db pull
