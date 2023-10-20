@@ -50,7 +50,7 @@ func documentToProtoDetail(record *db.DocumentModel) *proto.DocumentDetail {
 }
 
 func documentToProto(record *db.DocumentModel) *proto.Document {
-	image, _ := record.Image()
+	image := ""
 	svg, _ := record.Svg()
 	description, _ := record.Description()
 
@@ -77,7 +77,7 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 		filter = append(filter, db.Document.UserID.Equals(int(*req.UserId)))
 	}
 
-	var query = client.Document.FindMany(filter...)
+	var query = client.Document.FindMany(filter...).OrderBy(db.Document.CreatedAt.Order(db.SortOrderDesc))
 	if req.Limit != nil {
 		query = query.Take(int(*req.Limit))
 	}
@@ -91,8 +91,6 @@ func (s *Server) GetDocumentList(ctx context.Context, req *proto.GetDocumentList
 	}
 
 	for _, record := range records {
-		print(record.ID)
-
 		documents = append(documents, documentToProto(&record))
 
 	}
