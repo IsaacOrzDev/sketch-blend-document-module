@@ -8,6 +8,7 @@ import (
 	"sketch-blend-document-module/prisma"
 	"sketch-blend-document-module/proto"
 	"sketch-blend-document-module/services/document"
+	"sketch-blend-document-module/services/health"
 	"syscall"
 
 	"google.golang.org/grpc"
@@ -18,6 +19,7 @@ func main() {
 
 	server := grpc.NewServer()
 	proto.RegisterDocumentServiceServer(server, &document.Server{})
+	proto.RegisterHealthServer(server, &health.Server{})
 
 	reflection.Register(server)
 
@@ -27,6 +29,7 @@ func main() {
 	}
 
 	go func() {
+		fmt.Println("Starting server...")
 		if err := server.Serve(listener); err != nil {
 			panic(err)
 		}
